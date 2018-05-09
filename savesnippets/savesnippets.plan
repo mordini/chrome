@@ -1,0 +1,34 @@
+Purpose:
+
+A program to save the snippets from Chrome DevTools, as this ability does not exist.
+Nor does import.
+
+Scope:
+For now, it will be called "savesnippets"
+
+1.  Retrieve Snippets Data from Chrome (located in Preferences file)
+2.  Format as human-readable (currently is in one big cluster)
+3.  Save to files with names based on Snippet Name (so make sure those snippets are named in a meaningful way!)
+4.  Import the snippets back to Preferences
+
+Personal Goal:
+Create the same software using a variety of languages to demonstrate capacity to diversify.
+Also, since a plugin does not exist for this, I wish to release it, as other devs will likely want it.
+Current plugins use third-party solutions, whereas this is strictly using Google DevTools.
+
+Product Functions
+
+Information Processing - Retrieval
+1.  Get file location, verify existence
+2.  Access file
+3.  Read data
+4.  Get Relevant data (i.e. the snippets section)
+5.  Retrieve each snippet (likely use an array)
+6.  Get snippet name
+7.  Format Snippet into human-readable format 
+8.  Create file with snippet name
+9.  Output Snippet into file
+
+Information Processing - Import
+--------TBA-------------------
+
