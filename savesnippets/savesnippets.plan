@@ -32,3 +32,12 @@ Information Processing - Retrieval
 Information Processing - Import
 --------TBA-------------------
 
+Notes and Concepts:
+1. Can have multiple profiles.
+   Present menu of all available Preferences for profiles for selection.
+
+   These are stored in:
+     *Linux, tested in Mint only so far:
+     ** ~/.config/google-chrome/Default ... Profile 1 ... Profile 2..
+     *Windows 10:
+     ** ~/AppData/Local/google/chrome/
