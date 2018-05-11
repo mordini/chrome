@@ -1,4 +1,6 @@
 # Save Snippets from Google Chrome
+import json
+import re
 
 # Begin
 def main():
@@ -35,9 +37,11 @@ def getSnippets(pref_obj):
         closeFile(pref_obj)
 
     openTag = 'scriptSnippets'
-    closeTag = 'scriptSnippets_lastIdentifier'
-    snippets = prefText.split(openTag)[1].split(closeTag)[0]
-    formatSnippets(snippets)
+    closeTag = '","scriptSnippets_lastIdentifier'
+    #snippets = '{"' + openTag + prefText.split(openTag)[1].split(closeTag)[0]+'}' 
+    #snippets = prefText.split(openTag)[1].split(closeTag)[0]
+    snippets = re.search(openTag+'(.*)'+closeTag, prefText)
+    formatSnippets(snippets.group(1))
 
 # Print the snippet section
 def printFileText(pref_obj, prefText):
@@ -46,7 +50,7 @@ def printFileText(pref_obj, prefText):
     closeFile(pref_obj)
 
 def formatSnippets(snippets):
-    newLineSnippets = snippets.replace('\\n', '\n')
+    newLineSnippets = snippets.replace('\\n', '\n').replace('\\','')
     print(newLineSnippets)
 
 main()
