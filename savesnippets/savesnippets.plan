@@ -42,3 +42,4 @@ Notes and Concepts:
      *Windows 10:
      ** ~/AppData/Local/google/chrome/
 2.  To retrieve snippets we need to get all data between "scriptSnippets" and "scriptSnippets_lastIdentifier"
+    Note:  This is in JSON format
