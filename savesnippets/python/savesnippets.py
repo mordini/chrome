@@ -1,7 +1,10 @@
+# Rewrite me to use class/OOP stuff
+
 # Save Snippets from Google Chrome
 import json
 import re
 import sys
+import platform
 
 class File:
     def __init__(self, profName):
@@ -21,14 +24,26 @@ def main():
     #test = File('Preferences')
     #print(test.profName)
     #testJSON(pref_obj)
-    fileName = getFileName()
+    prefPath = getPrefPath()
+    fileName = getFileName(prefPath)
     pref_obj = getPrefObj(fileName)
     data = getData(pref_obj)
     writeBackupFile(data)
     closeFile(pref_obj)
-
-#rewrite me to use class/OOP stuff
-def getFileName():
+def getPlatform():
+    thePlatform = platform.system()
+    print(thePlatform )
+    return thePlatform 
+def getPrefPath():
+    thePlatform = getPlatform()
+    if thePlatform == 'Linux':
+        prefPath = '~/.config/google-chrome/'
+    elif thePlatform == 'Windows':
+        prefPath = '%APPDATALOCAL%\google\chrome'
+    else:
+        print('What kind of OS are you using man?')
+    return prefPath
+def getFileName(prefPath):
     fileName = sys.argv[1]
     print(sys.argv[1])
     return fileName
