@@ -1,28 +1,66 @@
 # Save Snippets from Google Chrome
 import json
 import re
-from pprint import pprint
+import sys
+
+class File:
+    def __init__(self, profName):
+        self.profName = profName
+    def getPrefObj():
+        pref_obj = openFile("Preferences")
+        return pref_obj
+    def getProfileName(data):
+        profName = data['profile']['name']
+        return profName
+    def getSnippets(data):
+        snippets = data['devtools']['preferences']['scriptSnippets']
+        return snippets
 
 # Begin
 def main():
-    pref_obj = openFile("Preferences")
-    #getSnippets(pref_obj)
-    testJSON(pref_obj)
+    #test = File('Preferences')
+    #print(test.profName)
+    #testJSON(pref_obj)
+    pref_obj = getPrefObj()
+    data = getData(pref_obj)
+    writeBackupFile(data)
     closeFile(pref_obj)
+
+#rewrite me to use class/OOP stuff
+def getPrefObj():
+    pref_obj = openFile("Preferences")
+    return pref_obj
+def getData(pref_obj):
+    data = json.load(pref_obj)
+    return data
+def getProfileName(data):
+    profName = data['profile']['name']
+    return profName
+def getSnippets(data):
+    snippets = data['devtools']['preferences']['scriptSnippets']
+    return snippets
+def writeBackupFile(data):
+    profName = getProfileName(data)
+    snippets = getSnippets(data)
+    backupFile = open(profName, 'w')
+    backupFile.write(snippets)
+    backupFile.close()
 
 # TEST GETTING JSON INFORMATION
 def testJSON(pref_obj):
     data = json.load(pref_obj)
     snippets = data['devtools']['preferences']['scriptSnippets']
-    #print(snippets)
+    testData = data['profile']['name']
     data['devtools']['preferences']['scriptSnippets'] = ''
     print('New snippets')
     print(data['devtools']['preferences']['scriptSnippets'])
     data['devtools']['preferences']['scriptSnippets'] = snippets
     print('Old snippets')
     print(data['devtools']['preferences']['scriptSnippets'])
-    #for e in data['devtools']:
-        #print(e)
+
+    print(testData)
+    for e in testData:
+        print(e)
 
 # Try to open the file
 # Note:  for "easy mode" use "with open" statement
@@ -33,7 +71,7 @@ def openFile(prefName):
         pref_obj = open(prefName, "r")
         return pref_obj
     except IOError as e:
-        print e.errno, e.strerror
+        print(e.errno, e.strerror)
         #print(prefName+' does not exist.')
         return
 
@@ -48,7 +86,7 @@ def getPrefText(pref_obj):
     return prefText
 
 # Get the snippets section from Chrome prefs
-def getSnippets(pref_obj):
+def getSnippetsOLD(pref_obj):
     prefText = getPrefText(pref_obj)
 
     if prefText:
@@ -64,7 +102,7 @@ def getSnippets(pref_obj):
 # Print the snippet section
 def printFileText(pref_obj, prefText):
     print('showing text')
-    print prefText
+    print(prefText)
     closeFile(pref_obj)
 
 def formatSnippets(snippets):
