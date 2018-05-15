@@ -41,5 +41,11 @@ Notes and Concepts:
      ** ~/.config/google-chrome/Default ... Profile 1 ... Profile 2..
      *Windows 10:
      ** ~/AppData/Local/google/chrome/
+
 2.  To retrieve snippets we need to get all data between "scriptSnippets" and "scriptSnippets_lastIdentifier"
     Note:  This is in JSON format
+    Note:  We now just get it directly, as intended -_-
+
+3.  We will search default Preference folders, and provide a list of Preferences to import from (or user may drag and drop)
+    We will need functions to scan, retrieve profile name, and present for user to select.
+    This will also be shown in GUI as checkboxes.

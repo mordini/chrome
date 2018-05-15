@@ -6,6 +6,7 @@ import re
 import sys
 import platform
 
+# This is floating as a test section
 class File:
     def __init__(self, profName):
         self.profName = profName
@@ -20,20 +21,27 @@ class File:
         return snippets
 
 # Begin
+
 def main():
     #test = File('Preferences')
     #print(test.profName)
     #testJSON(pref_obj)
+
     prefPath = getPrefPath()
-    fileName = getFileName(prefPath)
+    fileName = getFileName()
     pref_obj = getPrefObj(fileName)
     data = getData(pref_obj)
     writeBackupFile(data)
     closeFile(pref_obj)
+
 def getPlatform():
     thePlatform = platform.system()
     print(thePlatform )
     return thePlatform 
+
+# This will probably be altered, since this isn't concrete
+# Likely to check for default paths, pull up profiles
+# See .plan for details
 def getPrefPath():
     thePlatform = getPlatform()
     if thePlatform == 'Linux':
@@ -43,22 +51,28 @@ def getPrefPath():
     else:
         print('What kind of OS are you using man?')
     return prefPath
-def getFileName(prefPath):
+
+def getFileName():
     fileName = sys.argv[1]
     print(sys.argv[1])
     return fileName
+
 def getPrefObj(fileName):
     pref_obj = openFile(fileName)
     return pref_obj
+
 def getData(pref_obj):
     data = json.load(pref_obj)
     return data
+
 def getProfileName(data):
     profName = data['profile']['name']
     return profName
+
 def getSnippets(data):
     snippets = data['devtools']['preferences']['scriptSnippets']
     return snippets
+
 def writeBackupFile(data):
     profName = getProfileName(data)
     snippets = getSnippets(data)
@@ -66,13 +80,16 @@ def writeBackupFile(data):
     backupFile.write(snippets)
     backupFile.close()
 
+def importBackupFile(backName):
+    fileName = getFileName()
+    backup_obj = openFile(fileName)
 # Try to open the file
 # Note:  for "easy mode" use "with open" statement
 #        this will close the file automatically
 def openFile(prefName):
     print('opening: ' + prefName)
     try:
-        pref_obj = open(prefName, "r")
+        pref_obj = open(prefName, 'r')
         return pref_obj
     except IOError as e:
         print(e.errno, e.strerror)
@@ -83,6 +100,12 @@ def openFile(prefName):
 def closeFile(pref_obj):
     print('closing file')
     pref_obj.close()
+
+main()
+
+##################
+# OLD TEST STUFF #
+##################
 
 # Get the text to work with
 def getPrefText(pref_obj):
@@ -110,4 +133,3 @@ def testJSON(pref_obj):
     print(testData)
     for e in testData:
         print(e)
-main()
