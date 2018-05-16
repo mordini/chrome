@@ -109,10 +109,22 @@ def writeBackupFile(data):
 
 def importBackupFile(data):
     backup_obj = openPref(prefFileName)
-    # Note To Self:  Left off here 05/16/2018
+    # Note To Self:  Left off here 05/17/2018
+
+    # Open Pref File
+    # Open Backup File
+    # Get ALL Pref Data
+    # Get Backup Data
+    # json.load(prefData)
+    # json.load(backupData)
+    # Change Pref Data Snippets section to Backup
+    # Write new Pref Data to Pref file
+    # Close Pref File
+    # Close Backup File
     snippets = getSnippets(data)
     print('importing!')
     #print(data)
+    # Get 
     backup_obj.close()
 
 
