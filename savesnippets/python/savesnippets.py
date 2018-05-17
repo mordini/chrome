@@ -9,14 +9,14 @@ import argparse
 
 # This is floating as a test section
 class File:
-    def __init__(self, profName):
-        self.profName = profName
-    def getPrefObj():
-        pref_obj = openPref("Preferences")
+    def __init__(self, profileName):
+        self.profileName = profileName
+    def openFile():
+        pref_obj = openFile("Preferences")
         return pref_obj
-    def getProfFileName(data):
-        profName = data['profile']['name']
-        return profName
+    def getProfileName(data):
+        profileName = data['profile']['name']
+        return profileName
     def getSnippets(data):
         snippets = data['devtools']['preferences']['scriptSnippets']
         return snippets
@@ -27,20 +27,19 @@ def main():
     prefFileName = options['prefFileName']
     action = options['action']
 
-    print(prefFileName)
-    print(action)
-
-    pref_obj = getPrefObj(prefFileName)
-    data = getData(pref_obj)
+    # Open file here?
+    #pref_obj = openFile(prefFileName)
 
     if action == 'export':
         print('export that junk')
-        writeBackupFile(data)
+        writeBackupFile(prefFileName)
     elif action == 'import':
         print('import that junk')
-        importBackupFile(data) 
+        backupFileName = options['backupFileName']
+        importBackupFile(prefFileName, backupFileName) 
 
-    # #closePref(pref_obj)
+    # Close file here?
+    #pref_obj.close()
 
 def getPlatform():
     thePlatform = platform.system()
@@ -48,18 +47,18 @@ def getPlatform():
     return thePlatform 
 
 def getFileNameNew():
-    parser = argparse.ArgumentParser(description='Input Preferences filename.')
+    parser = argparse.ArgumentParser(description=\
+        'Input Preferences filename.')
     parser.add_argument('-f','--file',required=True,\
             help='Put in path to Preferences file')
     parser.add_argument('-x','--export',\
             help='Export Snippets, uses profile name.')
     parser.add_argument('-i','--import',\
-            help='Import preveiously exported Snippets.')
+            help='Import previously exported Snippets.')
     parser.parse_args()
     prefFileName = vars(parser.parse_args())
     print('You chose {} as your filename'.format(prefFileName['file']))
     return prefFileName['file']
-
 
 def getOptions():
     parser = argparse.ArgumentParser(description='Select Preferences\
@@ -68,7 +67,7 @@ def getOptions():
             help='Put in path to Preferences file')
     parser.add_argument('-a','--action',required=True,\
             choices=['export','import'],help='Choose between Export/Import')
-    parser.add_argument('-i','--backFileName',\
+    parser.add_argument('-i','--backupFileName',\
             help='Put in path to Backup file')
 
     parser.parse_args()
@@ -79,72 +78,80 @@ def getOptions():
     #    return;
 
     print(options)
-    print('You chose {} as your filename'.format(options['prefFileName']))
+    print('Preferences file is: {}'.format(options['prefFileName']))
+    print('Action is: {}'.format(options['action']))
 
-    #return options['file']
     return options
-
-def getPrefObj(prefFileName):
-    pref_obj = openPref(prefFileName)
-    return pref_obj
-
-def getData(pref_obj):
-    data = json.load(pref_obj)
-    return data
-
-def getProfFileName(data):
-    profName = data['profile']['name']
-    return profName
-
-def getSnippets(data):
-    snippets = data['devtools']['preferences']['scriptSnippets']
-    return snippets
-
-def writeBackupFile(data):
-    profName = getProfFileName(data)
-    snippets = getSnippets(data)
-    backup_obj = open(profName, 'w')
-    backup_obj.write(snippets)
-    backup_obj.close()
-
-def importBackupFile(data):
-    backup_obj = openPref(prefFileName)
-    # Note To Self:  Left off here 05/17/2018
-
-    # Open Pref File
-    # Open Backup File
-    # Get ALL Pref Data
-    # Get Backup Data
-    # json.load(prefData)
-    # json.load(backupData)
-    # Change Pref Data Snippets section to Backup
-    # Write new Pref Data to Pref file
-    # Close Pref File
-    # Close Backup File
-    snippets = getSnippets(data)
-    print('importing!')
-    #print(data)
-    # Get 
-    backup_obj.close()
-
 
 # Try to open the file
 # Note:  for "easy mode" use "with open" statement
 #        this will close the file automatically
-def openPref(prefName):
-    print('opening: ' + prefName)
+def openFile(fileName):
+    print('opening: ' + fileName)
     try:
-        pref_obj = open(prefName, 'r')
-        return pref_obj
+        file_obj = open(fileName, 'r')
+        return file_obj
     except IOError as e:
         print(e.errno, e.strerror)
-        #print(prefName+' does not exist.')
+        #print(fileName+' does not exist.')
         return
 
-# Close the file
-def closePref(pref_obj):
-    print('closing file')
+def getData(data_obj):
+    data = json.load(data_obj)
+    return data
+
+def getProfileName(data):
+    profileName = data['profile']['name']
+    return profileName
+
+def getSnippets(data):
+    snippets = data['devtools']['preferences']['scriptSnippets']
+    print(snippets)
+    return snippets
+
+def restoreSnippets():
+    # Open Pref File
+    pref_obj = openFile(prefFileName)
+    # Get ALL Pref Data
+    prefData = getData(pref_obj)
+    # Write new Pref Data to Pref file
+    snippets = getSnippets(data)
+    # Close Pref File
     pref_obj.close()
+    print('Save Snippets')
+
+def writeBackupFile(prefFileName):
+
+    # Open the preference file
+    pref_obj = openFile(prefFileName)
+    data = getData(pref_obj)
+    pref_obj.close()
+
+    # Get the actual profilename (google stores generic names)
+    profileName = getProfileName(data)
+
+    # Get Snippets from Devtools
+    snippets = getSnippets(data)
+
+    # Create backup file using profilename
+    backup_obj = open(profileName, 'w')
+    backup_obj.write(snippets)
+    backup_obj.close()
+
+def importBackupFile(prefFileName,backupFileName):
+    print('importing!')
+    # Note To Self:  Left off here 05/17/2018
+
+    # Open Backup File
+    backup_obj = openFile(backupFileName)
+    # Get Backup Data
+    backupData = getData(backup_obj)
+    print(backupData)
+    # Change Pref Data Snippets section to Backup
+    #restoreSnippets(backupData)
+
+    # Close Backup File
+    backup_obj.close()
 
 main()
 
@@ -178,7 +185,7 @@ main()
 #def printFileText(pref_obj, prefText):
 #  print('showing text')
 #    print(prefText)
-#    closePref(pref_obj)
+#    pref_obj.close()
 #
 ## TEST GETTING JSON INFORMATION
 #def testJSON(pref_obj):
