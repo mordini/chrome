@@ -128,27 +128,54 @@ def exportBackupFile(prefFileName):
     backup_obj.close()
 
 def restoreSnippets(backupData,prefFileName):
-    print('Restore Snippets')
-    # Open Pref File
-    pref_obj = openFile(prefFileName, 'r+')
-    # Get ALL Pref Data
-    prefData = getData(pref_obj)
-    print('THIS IS THE OLD PREF DATA')
-    print(prefData)
+    ## Note To Self:  Left off here 05/17/2018
+    with(prefFileName, 'r') as pref_obj:
+        pref_data = json.load(pref_obj)
+        for item in pref_data:
+          if item['scriptSnippets']:
+             item['scriptSnippets'] = backupData
 
-    # Put backupData into prefData
-    prefData['devtools']['preferences']['scriptSnippets'] = backupData
-    prefDataPrint = prefData['devtools']['preferences']['scriptSnippets']
-    print('THIS IS THE NEW PREF DATA')
-    print(prefDataPrint)
-    
-    # Note To Self:  Left off here 05/17/2018
-    # may need to walk through items in prefData and replace on key.
-    # Write new Pref Data to Pref file
-    #pref_obj.write(prefDataPrint)
-    json.dump(prefDataPrint, prefFileName)
-    # Close Pref File
-    pref_obj.close()
+    with(prefFileName, 'w') as pref_obj:
+        json.dump(pref_data, pref_obj)
+    #print('Restore Snippets')
+    ## Open Pref File
+    #pref_obj = openFile(prefFileName, 'r')
+    ## Get ALL Pref Data
+    #prefData = getData(pref_obj)
+
+    #print('THIS IS THE CURRENT PREF DATA')
+    #print(prefData)
+
+    #print('-------------------------------------------')
+    #print('-------------------------------------------')
+    #print('THIS IS THE current SNIP DATA')
+    #currentSnipData = prefData['devtools']['preferences']['scriptSnippets']
+    #print(currentSnipData)
+
+    #print('-------------------------------------------')
+    #print('-------------------------------------------')
+
+    ## Put backupData into prefData
+    #prefData['devtools']['preferences']['scriptSnippets'] = backupData
+    #newSnipData = prefData['devtools']['preferences']['scriptSnippets']
+    #print('THIS IS THE NEW SNIP DATA')
+    #print(newSnipData)
+    #
+    ## Close Pref File (we will reopen to write)
+    ## to prevent appending
+    #pref_obj.close()
+
+    ## may need to walk through items in prefData and replace on key.
+    ## Write new Pref Data to Pref file
+    ##pref_obj.write(newSnipData)
+
+    ## let's use with for fun
+    #with open(prefFileName, 'w') as pref_obj:
+    #    json.dump(newSnipData, pref_obj)
+
+    ##json.dump(newSnipData, pref_obj)
+    ## Close Pref File
+    ## pref_obj.close()
 
 def importBackupFile(prefFileName,backupFileName):
     print('importing!')
