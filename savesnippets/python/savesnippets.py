@@ -32,7 +32,7 @@ def main():
 
     if action == 'export':
         print('export that junk')
-        writeBackupFile(prefFileName)
+        exportBackupFile(prefFileName)
     elif action == 'import':
         print('import that junk')
         backupFileName = options['backupFileName']
@@ -86,10 +86,10 @@ def getOptions():
 # Try to open the file
 # Note:  for "easy mode" use "with open" statement
 #        this will close the file automatically
-def openFile(fileName):
+def openFile(fileName, mode):
     print('opening: ' + fileName)
     try:
-        file_obj = open(fileName, 'r')
+        file_obj = open(fileName, mode)
         return file_obj
     except IOError as e:
         print(e.errno, e.strerror)
@@ -109,21 +109,10 @@ def getSnippets(data):
     print(snippets)
     return snippets
 
-def restoreSnippets():
-    # Open Pref File
-    pref_obj = openFile(prefFileName)
-    # Get ALL Pref Data
-    prefData = getData(pref_obj)
-    # Write new Pref Data to Pref file
-    snippets = getSnippets(data)
-    # Close Pref File
-    pref_obj.close()
-    print('Save Snippets')
-
-def writeBackupFile(prefFileName):
+def exportBackupFile(prefFileName):
 
     # Open the preference file
-    pref_obj = openFile(prefFileName)
+    pref_obj = openFile(prefFileName, 'r')
     data = getData(pref_obj)
     pref_obj.close()
 
@@ -134,21 +123,43 @@ def writeBackupFile(prefFileName):
     snippets = getSnippets(data)
 
     # Create backup file using profilename
-    backup_obj = open(profileName, 'w')
+    backup_obj = openFile(profileName, 'w')
     backup_obj.write(snippets)
     backup_obj.close()
 
+def restoreSnippets(backupData,prefFileName):
+    print('Restore Snippets')
+    # Open Pref File
+    pref_obj = openFile(prefFileName, 'r+')
+    # Get ALL Pref Data
+    prefData = getData(pref_obj)
+    print('THIS IS THE OLD PREF DATA')
+    print(prefData)
+
+    # Put backupData into prefData
+    prefData['devtools']['preferences']['scriptSnippets'] = backupData
+    prefDataPrint = prefData['devtools']['preferences']['scriptSnippets']
+    print('THIS IS THE NEW PREF DATA')
+    print(prefDataPrint)
+    
+    # Note To Self:  Left off here 05/17/2018
+    # may need to walk through items in prefData and replace on key.
+    # Write new Pref Data to Pref file
+    #pref_obj.write(prefDataPrint)
+    json.dump(prefDataPrint, prefFileName)
+    # Close Pref File
+    pref_obj.close()
+
 def importBackupFile(prefFileName,backupFileName):
     print('importing!')
-    # Note To Self:  Left off here 05/17/2018
 
     # Open Backup File
-    backup_obj = openFile(backupFileName)
+    backup_obj = openFile(backupFileName, 'r')
     # Get Backup Data
     backupData = getData(backup_obj)
     print(backupData)
     # Change Pref Data Snippets section to Backup
-    #restoreSnippets(backupData)
+    restoreSnippets(backupData,prefFileName)
 
     # Close Backup File
     backup_obj.close()
