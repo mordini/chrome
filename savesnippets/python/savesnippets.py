@@ -41,6 +41,10 @@ def main():
     # Close file here?
     #pref_obj.close()
 
+def printEmptyLines(num):
+    for i in range(0, num):
+        print()
+
 def getPlatform():
     thePlatform = platform.system()
     print(thePlatform)
@@ -89,7 +93,7 @@ def getOptions():
 def openFile(fileName, mode):
     print('opening: ' + fileName)
     try:
-        file_obj = open(fileName, mode)
+        file_obj = open(fileName, mode, encoding='utf8')
         return file_obj
     except IOError as e:
         print(e.errno, e.strerror)
@@ -129,14 +133,27 @@ def exportBackupFile(prefFileName):
 
 def restoreSnippets(backupData,prefFileName):
     ## Note To Self:  Left off here 05/17/2018
+    printEmptyLines(5)
+    print('restore snippets to backup, show backupData:')
+    printEmptyLines(5)
+    print(backupData)
+    printEmptyLines(2)
+    print('prefFileName is: ')
+    print(prefFileName)
+    printEmptyLines(2)
+
     with(prefFileName, 'r') as pref_obj:
         pref_data = json.load(pref_obj)
         for item in pref_data:
           if item['scriptSnippets']:
+             print('item scriptsnippets is:')
+             print(item['scriptSnippets'])
              item['scriptSnippets'] = backupData
+             print('NEW item scriptsnippets is:')
+             print(item['scriptSnippets'])
 
-    with(prefFileName, 'w') as pref_obj:
-        json.dump(pref_data, pref_obj)
+    #with(prefFileName, 'w') as pref_obj:
+        #json.dump(pref_data, pref_obj)
     #print('Restore Snippets')
     ## Open Pref File
     #pref_obj = openFile(prefFileName, 'r')
